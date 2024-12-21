@@ -385,12 +385,32 @@
                                     <%};%>
                                 </select>
                                 <ul>
-                                    <button type="submit style="
-                                            margin-top: 5%;
-                                            width: 100% form="form1" value="Submit">Xác nhận</button>
+                                    <button
+                                            type="button"
+                                            style="margin-top: 5%; width: 100%"
+                                            onclick="confirmSignature(event)">
+                                        Xác nhận
+                                    </button>
                                 </ul>
                             <%}%>
                         </form>
+                        <!-- Modal cho chữ ký -->
+                        <div id="signatureModal">
+                            <div id="modalContent">
+                                <div id="modalHeader">Nhập Chữ Ký Điện Tử</div>
+                                <div>
+                                    <label for="signatureInput">Nhập chữ ký:</label><br>
+                                    <input type="text" id="signatureInput" placeholder="Nhập chữ ký điện tử của bạn" style="width: 100%; margin-bottom: 10px;"><br>
+
+                                    <label for="signatureFile">Hoặc chọn file .txt chứa chữ ký:</label><br>
+                                    <input type="file" id="signatureFile" accept=".txt" style="width: 100%; margin-bottom: 10px;"><br>
+                                </div>
+                                <div id="modalFooter">
+                                    <button onclick="handleSignatureSubmit()">Gửi</button>
+                                    <button onclick="closeSignatureModal()">Hủy</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -459,6 +479,118 @@
     <script src="js/mixitup.min.js"></script>
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/main.js"></script>
+
+    <script>
+        // Hiển thị hộp thoại nhập chữ ký
+        function confirmSignature(event) {
+            event.preventDefault(); // Ngăn form gửi ngay lập tức
+            const useSignature = confirm("Bạn có muốn sử dụng chữ ký điện tử không?");
+            if (useSignature) {
+                showSignatureModal()
+            } else {
+                // Gửi form mà không thêm chữ ký
+                document.getElementById('form1').submit();
+            }
+        }
+    </script>
+    <style>
+        /* CSS cho modal */
+        #signatureModal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        #modalContent {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            border-radius: 8px;
+        }
+        #modalHeader {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        #modalFooter {
+            margin-top: 15px;
+            text-align: right;
+        }
+        #modalFooter button {
+            padding: 8px 16px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #modalFooter button:hover {
+            background-color: #0056b3;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+    <script>
+        // Hiển thị modal
+        function showSignatureModal() {
+            document.getElementById('signatureModal').style.display = 'block';
+        }
+
+        // Đóng modal
+        function closeSignatureModal() {
+            document.getElementById('signatureModal').style.display = 'none';
+        }
+
+        // Xử lý khi người dùng gửi chữ ký
+        function handleSignatureSubmit() {
+            const signatureInput = document.getElementById('signatureInput').value.trim();
+            const fileInput = document.getElementById('signatureFile').files[0];
+            const form = document.getElementById('form1');
+
+            if (fileInput) {
+                const allowedExtensions = ['txt']; // Chỉ cho phép file .txt
+                const fileExtension = fileInput.name.split('.').pop().toLowerCase();
+
+                if (!allowedExtensions.includes(fileExtension)) {
+                    alert("Vui lòng chọn file định dạng .txt!");
+                    return; // Ngừng xử lý nếu định dạng file không hợp lệ
+                }
+                // Nếu định dạng hợp lệ, đọc file
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'signature';
+                    hiddenInput.value = e.target.result.trim(); // Nội dung từ file
+                    form.appendChild(hiddenInput);
+                    closeSignatureModal();
+                    form.submit();
+                };
+                reader.readAsText(fileInput);
+            } else if (signatureInput) {
+                // Nếu không có file nhưng có chữ ký trong input
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'signature';
+                hiddenInput.value = signatureInput; // Nội dung từ input text
+                form.appendChild(hiddenInput);
+                closeSignatureModal();
+                form.submit();
+            } else {
+                // Nếu cả file và input đều trống
+                alert("Vui lòng nhập chữ ký hoặc chọn file!");
+            }
+        }
+    </script>
+
 
 
 
