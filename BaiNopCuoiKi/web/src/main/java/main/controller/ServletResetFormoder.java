@@ -9,7 +9,6 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 
 @WebServlet(name = "ServletResetFormoder", value = "/ServletResetFormoder")
@@ -41,7 +40,8 @@ public class ServletResetFormoder extends HttpServlet {
            System.out.println("chữ ký"+ signature);
            if (user!=null) {
                try {
-                   SignaruteService.getInstance().createSignature(user,cart,adrs1,adrs2);
+                  String hashData = SignaruteService.getInstance().createHashSignature(user,cart,adrs1,adrs2);
+
                } catch (NoSuchAlgorithmException e) {
                    throw new RuntimeException(e);
                }

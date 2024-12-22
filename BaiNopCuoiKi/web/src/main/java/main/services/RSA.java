@@ -28,6 +28,15 @@ public class RSA {
         keyPairGenerator.initialize(2048); // Độ dài key (2048 bits là một giá trị thông dụng)
         return keyPairGenerator.generateKeyPair();
     }
+    public String encodePublicKey(PublicKey publicKey) {
+        byte[] publicKeyBytes = publicKey.getEncoded();
+        return Base64.getEncoder().encodeToString(publicKeyBytes);
+    }
+    // Hàm mã hóa Private Key sang chuỗi Base64
+    public String encodePrivateKey(PrivateKey privateKey) {
+        byte[] privateKeyBytes = privateKey.getEncoded();
+        return Base64.getEncoder().encodeToString(privateKeyBytes);
+    }
     // Xuất khóa công khai
     public String exportPublicKey() {
         return Base64.getEncoder().encodeToString(publicKey.getEncoded());
@@ -61,10 +70,11 @@ public class RSA {
     }
 
     // Tạo chữ ký (sign) thủ công: dùng Private Key để mã hóa hash của dữ liệu
-    public String signData(byte[] data) throws Exception {
+    public String signData(String  data) throws Exception {
+        byte[] dataBytes = data.getBytes("UTF-8");
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
         cipher.init(Cipher.ENCRYPT_MODE, privateKey);
-        byte[] signatureBytes = cipher.doFinal(data);
+        byte[] signatureBytes = cipher.doFinal(dataBytes);
         return Base64.getEncoder().encodeToString(signatureBytes);
     }
 
