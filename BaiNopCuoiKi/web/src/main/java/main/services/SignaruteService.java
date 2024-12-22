@@ -7,6 +7,7 @@ import main.bean.User;
 import main.db.ConnectMysqlExample;
 
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,14 +29,14 @@ public class SignaruteService {
         String date= AppService.getNowDate().toString();
         DataSignature dataSignature = new DataSignature(data,user,total,quanity,date,ads1,ads2);
         String hashData = dataSignature.hashDataSignature();
-        System.out.println("Hash" + hashData);
+        System.out.println("Hash : " + hashData);
         return hashData;
     }
-
+        // Lấy key của user
     public String getPublicKeyFromUser(String id){
         try {
             Connection conn = ConnectMysqlExample.getConnection(ConnectMysqlExample.getDbUrl(), ConnectMysqlExample.getUserName(), ConnectMysqlExample.getPASSWORD());
-            String query = "select keyrsa.keyRSA from keyrsa where keyrsa.id_user= ?";
+            String query = "select keyrsa.keyRSA from keyrsa where keyrsa.id_user= ? and keyrsa.status = 'ACTIVE'";
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
@@ -47,6 +48,19 @@ public class SignaruteService {
             ex.printStackTrace();
         }
         return null;
+    }
+    // Mã hóa dữ lệu đã hash bang private key
+    public String encryptHashDataSignature(String data, String privateKey) throws Exception {
+        RSA rsa = new RSA();
+        rsa.importPrivateKey(privateKey);
+        return rsa.signData(data);
+    }
+    // Xác thực chữ ký
+    public boolean verifySignature(String dataHashSignature, String encryptHashDataSignature, String publicKey) throws Exception {
+
+        RSA rsa = new RSA();
+        rsa.importPublicKey(publicKey);
+        return rsa.verifySignature(dataHashSignature,encryptHashDataSignature);
     }
 
     public static void main(String[] args) {
