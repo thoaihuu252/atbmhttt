@@ -182,7 +182,7 @@
           </div>
         </div>
 
-        <div class="col-lg-10 col-md-5" style="height: 340px;">
+        <div class="col-lg-10 col-md-5" style="height: 364px;">
           <!-- Thong tin -->
           <!-- Thong tin -->
           <!-- Thong tin -->
@@ -229,8 +229,16 @@
                   %>
                   <div class="data">
                     <h4>Sử dụng Khóa của bạn</h4>
-                    <a href="" style="background-color: #2ec791;height: 40px;width: 100px;color: #000000;border-radius: 3px;padding: 8px 14px 5px 15px;">Nhập Khóa của bạn</a>
-
+                    <form action="">
+                    <div>
+                      <input type="text" id="signatureInput" placeholder="Nhập chữ ký điện tử của bạn" style="width: 100%; margin-bottom: 10px;"><br>
+                      <label for="signatureFile">Hoặc chọn file .txt chứa chữ ký:</label><br>
+                      <input type="file" id="signatureFile" accept=".txt" style="width: 100%; margin-bottom: 10px;"><br>
+                    </div>
+                      <div class="data">
+                        <button href="ServletCreateKey" style="background-color: #2ec791;height: 40px;width: 100px;color: #000000;border-radius: 3px;padding: 8px 14px 5px 15px;">Gửi</button>
+                      </div>
+                    </form>
                   </div>
                 </div>
               </div>

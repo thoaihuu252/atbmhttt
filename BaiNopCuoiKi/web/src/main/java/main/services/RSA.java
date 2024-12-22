@@ -89,11 +89,11 @@ public class RSA {
     }
 
     public static void main(String[] args) throws NoSuchAlgorithmException {
-        KeyPair kp =   RSA.getInstance().generateKeyPair();
-        // PublicKey
-        PublicKey publicKey = kp.getPublic();
-        // PrivateKey
-        PrivateKey privateKey = kp.getPrivate();
-
+//        KeyPair kp =   RSA.getInstance().generateKeyPair();
+//        // PublicKey
+//        PublicKey publicKey = kp.getPublic();
+//        // PrivateKey
+//        PrivateKey privateKey = kp.getPrivate();
+       
     }
 }
