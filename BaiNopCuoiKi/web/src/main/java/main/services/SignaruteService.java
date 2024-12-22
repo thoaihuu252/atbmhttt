@@ -9,6 +9,7 @@ import main.db.ConnectMysqlExample;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.HashMap;
 
 public class SignaruteService {
@@ -19,8 +20,8 @@ public class SignaruteService {
         }
         return instance;
     }
-
-    public void createSignature(User user , Cart map, String ads1, String ads2) throws NoSuchAlgorithmException {
+    // Tạo hash dữ liệu đặt hàng
+    public String createHashSignature(User user , Cart map, String ads1, String ads2) throws NoSuchAlgorithmException {
         HashMap<String, Products> data = map.getData();
         long total = map.getTotal();
         int quanity = map.getQuantity();
@@ -28,6 +29,27 @@ public class SignaruteService {
         DataSignature dataSignature = new DataSignature(data,user,total,quanity,date,ads1,ads2);
         String hashData = dataSignature.hashDataSignature();
         System.out.println("Hash" + hashData);
+        return hashData;
+    }
 
+    public String getPublicKeyFromUser(String id){
+        try {
+            Connection conn = ConnectMysqlExample.getConnection(ConnectMysqlExample.getDbUrl(), ConnectMysqlExample.getUserName(), ConnectMysqlExample.getPASSWORD());
+            String query = "select keyrsa.keyRSA from keyrsa where keyrsa.id_user= ?";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, id);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                return rs.getString(1);
+            }
+            conn.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(SignaruteService.getInstance().getPublicKeyFromUser("USER2"));
     }
 }
