@@ -2,11 +2,13 @@ package main.controller;
 
 import main.bean.*;
 import main.services.AddOderService;
+import main.services.SignaruteService;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 @WebServlet(name = "ServletResetFormoder", value = "/ServletResetFormoder")
@@ -29,14 +31,20 @@ public class ServletResetFormoder extends HttpServlet {
            request.getRequestDispatcher("/GioHang.jsp").forward(request, response);
        }
        if (stage==1){
-
            User user = (User) session.getAttribute("auth");
            Cart cart = (Cart) session.getAttribute("cart");
            String adrs1 = request.getParameter("diachi1");
            String adrs2 = request.getParameter("diachi2");
+           String signature = request.getParameter("signature");
            String vouch = (String) request.getParameter("voucher");
+           System.out.println("chữ ký"+ signature);
            if (user!=null) {
+               try {
+                  String hashData = SignaruteService.getInstance().createHashSignature(user,cart,adrs1,adrs2);
 
+               } catch (NoSuchAlgorithmException e) {
+                   throw new RuntimeException(e);
+               }
                if (AddOderService.getInstance().adODer(user.getIdacc(), cart, vouch,adrs1,adrs2)) {
                    request.setAttribute("error", "Thanh toán thành công");
                    session.setAttribute("cart", new Cart());
