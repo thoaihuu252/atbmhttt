@@ -72,6 +72,10 @@
                 String a = (String) session.getAttribute("login");
                 User user = (User) session.getAttribute("auth");
                 Key ifkey= (Key) session.getAttribute("ifkey");
+                if(ifkey==null){
+                  ifkey= new Key("Chưa Tạo","");
+                }
+
                 ArrayList<Order> list = (ArrayList<Order>) session.getAttribute("alloder");
                 String mess = (String)request.getAttribute("message");
 
@@ -194,7 +198,7 @@
             <div class="right">
               <div class="info">
 
-                <div class="chinhsuainfo"> <h3>Thông tin</h3>    <a href="Chinhsuathongtin.jsp" style="background-color: #2ec791;margin-left: 23%;height: 40px;width: 100px;color: #000000;border-radius: 3px;padding: 8px 0px 5px 15px;">Vô hiệu hóa</a></div>
+                <div class="chinhsuainfo"> <h3>Thông tin</h3>    <a href="ServletLockKey" style="background-color: #2ec791;margin-left: 23%;height: 40px;width: 100px;color: #000000;border-radius: 3px;padding: 8px 0px 5px 15px;">Vô hiệu hóa</a></div>
 
                 <div class="info_data"> <div class="data">
                   <h4> Trạng thái </h4>
@@ -207,25 +211,25 @@
                 </div>
 
                 <div class="projects_data">
-                  <% if (ifkey.getStatus().equals("Chưa Tạo")){
+                  <% if (ifkey.getStatus().equals("Chưa Tạo Hoặc Đã Bị Vô Hiệu Hóa")){
                   %>
                   <div class="data">
-                    <h4>Tạo khóa</h4>
-                    <a href="/ServletCreateKey" style="background-color: #2ec791;height: 40px;width: 100px;color: #000000;border-radius: 3px;padding: 8px 14px 5px 15px;">Tạo Khóa</a>
+                    <h4>Tạo khóa </h4>
+                    <a href="ServletCreateKey" style="background-color: #2ec791;height: 40px;width: 100px;color: #000000;border-radius: 3px;padding: 8px 14px 5px 15px;">Tạo Khóa</a>
                   </div>
                   <%
                     }else{
                   %>
                   <div class="data">
-                    <h4>Tạo khóa</h4>
-                    <a href="/ServletCreateKey" style="background-color: #2ec791;height: 40px;width: 100px;color: #000000;border-radius: 3px;padding: 8px 14px 5px 15px;">Thay khóa</a>
+                    <h4>Tạo khóa khác</h4>
+                    <a href="ServletCreateKey" style="background-color: #2ec791;height: 40px;width: 100px;color: #000000;border-radius: 3px;padding: 8px 14px 5px 15px;">Thay khóa khác</a>
                   </div>
                   <%
                     }
                   %>
                   <div class="data">
-                    <h4>Quên khóa</h4>
-                    <a href="Chinhsuathongtin.jsp" style="background-color: #2ec791;height: 40px;width: 100px;color: #000000;border-radius: 3px;padding: 8px 14px 5px 15px;">Quên Khóa</a>
+                    <h4>Sử dụng Khóa của bạn</h4>
+                    <a href="" style="background-color: #2ec791;height: 40px;width: 100px;color: #000000;border-radius: 3px;padding: 8px 14px 5px 15px;">Nhập Khóa của bạn</a>
 
                   </div>
                 </div>

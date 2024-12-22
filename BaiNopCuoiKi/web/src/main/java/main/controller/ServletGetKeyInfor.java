@@ -24,10 +24,11 @@ public class ServletGetKeyInfor extends HttpServlet {
         User user = (User) session.getAttribute("auth");
         if(user!=null) {
             String iduser = user.getUserId();
-            User usernow = useService.getInstance().getAllUserByID(iduser);
+
             Key  ifkey= keyService.getInstance().getKey(iduser);
             session.setAttribute("ifkey",ifkey);
             request.getRequestDispatcher("/key.jsp").forward(request, response);
+
         }
         else {
             response.sendRedirect("/DangNhap.jsp");

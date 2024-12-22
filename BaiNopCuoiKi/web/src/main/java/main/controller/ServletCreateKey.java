@@ -2,6 +2,7 @@ package main.controller;
 
 import main.bean.*;
 import main.services.*;
+import main.services.RSA;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -32,11 +33,12 @@ public class ServletCreateKey extends HttpServlet {
                 PublicKey publicKey = kp.getPublic();
                 // PrivateKey
                 PrivateKey privateKey = kp.getPrivate();
+                keyService.getInstance().importNewKey(iduser,RSA.getInstance().encodePublicKey(publicKey));
                 String text = "-----BEGIN PRIVATE KEY-----"+"<BR>"+RSA.getInstance().encodePrivateKey(privateKey)+"<BR>"+"-----END PRIVATE KEY-----";
                 Utils.getInstance().sendMail(a,"Private Key for You",text);
                 String mess="Private key của bạn được gửi về EMail";
                 request.setAttribute("message",mess);
-                request.getRequestDispatcher("/key.jsp").forward(request, response);
+                request.getRequestDispatcher("ServletGetKeyInfor").forward(request, response);
             } catch (NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
             }

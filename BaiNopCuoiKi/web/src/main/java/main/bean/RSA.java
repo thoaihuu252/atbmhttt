@@ -55,6 +55,7 @@ public class RSA {
     // Nhập khóa riêng tư từ chuỗi
     public PrivateKey importPrivateKey(String privateKeyString) throws NoSuchAlgorithmException, InvalidKeySpecException {
         byte[] privateKeyBytes = Base64.getDecoder().decode(privateKeyString);
+
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         return keyFactory.generatePrivate(keySpec);

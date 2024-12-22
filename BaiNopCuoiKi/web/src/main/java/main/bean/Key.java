@@ -5,15 +5,30 @@ public class Key {
     String key;
     String status;
     String timeActive;
-
+    String timeExpired;
     public Key() {
     }
+
 
     public Key(String id_key, String key, String status, String timeActive) {
         this.id_key = id_key;
         this.key = key;
         this.status = status;
         this.timeActive = timeActive;
+    }
+
+
+    public Key(String status,String timeActive) {
+        this.status = status;
+        this.timeActive = timeActive;
+
+    }
+    public String getTimeExpired() {
+        return timeExpired;
+    }
+
+    public void setTimeExpired(String timeExpired) {
+        this.timeExpired = timeExpired;
     }
 
     public String getId_key() {
