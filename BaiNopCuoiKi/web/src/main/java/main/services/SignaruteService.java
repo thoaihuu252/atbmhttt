@@ -11,6 +11,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.HashMap;
 
 public class SignaruteService {
@@ -22,12 +23,12 @@ public class SignaruteService {
         return instance;
     }
     // Tạo hash dữ liệu đặt hàng
-    public String createHashSignature(User user , Cart map, String ads1, String ads2) throws NoSuchAlgorithmException {
+    public String createHashSignature(User user , Cart map, String ads1, String ads2, Timestamp timestamp) throws NoSuchAlgorithmException {
         HashMap<String, Products> data = map.getData();
         long total = map.getTotal();
         int quanity = map.getQuantity();
         String date= AppService.getNowDate().toString();
-        DataSignature dataSignature = new DataSignature(data,user,total,quanity,date,ads1,ads2);
+        DataSignature dataSignature = new DataSignature(data,user,total,quanity,date,ads1,ads2,timestamp);
         String hashData = dataSignature.hashDataSignature();
         System.out.println("Hash : " + hashData);
         return hashData;
@@ -37,6 +38,22 @@ public class SignaruteService {
         try {
             Connection conn = ConnectMysqlExample.getConnection(ConnectMysqlExample.getDbUrl(), ConnectMysqlExample.getUserName(), ConnectMysqlExample.getPASSWORD());
             String query = "select keyrsa.keyRSA from keyrsa where keyrsa.id_user= ? and keyrsa.status = 'ACTIVE'";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, id);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                return rs.getString(1);
+            }
+            conn.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+    public String getIdKeyUser(String id){
+        try {
+            Connection conn = ConnectMysqlExample.getConnection(ConnectMysqlExample.getDbUrl(), ConnectMysqlExample.getUserName(), ConnectMysqlExample.getPASSWORD());
+            String query = "select keyrsa.ID_key from keyrsa where keyrsa.id_user= ? and keyrsa.status = 'ACTIVE'";
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
@@ -62,8 +79,15 @@ public class SignaruteService {
         rsa.importPublicKey(publicKey);
         return rsa.verifySignature(dataHashSignature,encryptHashDataSignature);
     }
+    public String getSignatureFromForm(String signatureFromInput,String signatureFromFile){
+        if (signatureFromFile != null){
+            return signatureFromFile;
+        } else {
+            return signatureFromInput;
+        }
+    }
 
     public static void main(String[] args) {
-        System.out.println(SignaruteService.getInstance().getPublicKeyFromUser("USER2"));
+        System.out.println(SignaruteService.getInstance().getIdKeyUser("USER1"));
     }
 }
