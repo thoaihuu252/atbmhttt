@@ -226,6 +226,7 @@
                                     <th>Tổng Tiền</th>
                                     <th>Trạng Thái</th>
                                     <th>Hành Động</th>
+                                    <th>Chữ Ký</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -241,6 +242,8 @@
                                     <td>
                                         <a href="./ServletGetUserOder?idoder=<%=item.getIdOder()%>"><i class="fa fa-file" aria-hidden="true"></i>Chi Tiết</a>
                                         <a href="./ServletCancelOder?idoder=<%=item.getIdOder()%>"><i class="fa fa-trash" aria-hidden="true"></i>Hủy</a>
+                                    </td>
+                                    <td><%=item.getStatusSignature()%></td>
                                 </tr>
                                 <%}%>
                                 </tbody>
