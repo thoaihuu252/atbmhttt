@@ -229,14 +229,14 @@
                   %>
                   <div class="data">
                     <h4>Sử dụng Khóa của bạn</h4>
-                    <form action="">
-                    <div>
-                      <input type="text" id="signatureInput" placeholder="Nhập chữ ký điện tử của bạn" style="width: 100%; margin-bottom: 10px;"><br>
-                      <label for="signatureFile">Hoặc chọn file .txt chứa chữ ký:</label><br>
-                      <input type="file" id="signatureFile" accept=".txt" style="width: 100%; margin-bottom: 10px;"><br>
-                    </div>
+                    <form id="signatureForm" action="ServletAddKeyFromUser" method="POST">
+                      <div>
+                        <input type="text" id="signatureInput" placeholder="Nhập chữ ký điện tử của bạn" style="width: 100%; margin-bottom: 10px;"><br>
+                        <label for="signatureFile">Hoặc chọn file .pem chứa chữ ký:</label><br>
+                        <input type="file" id="signatureFile" accept=".pem" style="width: 100%; margin-bottom: 10px;"><br>
+                      </div>
                       <div class="data">
-                        <button href="ServletCreateKey" style="background-color: #2ec791;height: 40px;width: 100px;color: #000000;border-radius: 3px;padding: 8px 14px 5px 15px;">Gửi</button>
+                        <button type="button" onclick="handleSignatureSubmit()" style="background-color: #2ec791; height: 40px; width: 100px; color: #000000; border-radius: 3px; padding: 8px 14px 5px 15px;">Gửi</button>
                       </div>
                     </form>
                   </div>
@@ -316,7 +316,57 @@
 <script src="js/owl.carousel.min.js"></script>
 <script src="js/main.js"></script>
 
+<script>
+  function handleSignatureSubmit() {
+    const signatureInput = document.getElementById("signatureInput").value.trim();
+    const fileInput = document.getElementById("signatureFile").files[0];
+    const form = document.getElementById("signatureForm");
 
+    // Kiểm tra nếu cả hai đều trống
+    if (!signatureInput && !fileInput) {
+      alert("Vui lòng nhập chữ ký hoặc chọn file!");
+      return; // Ngừng xử lý nếu cả hai đều trống
+    }
+
+    // Tạo hidden input cho chữ ký từ input text
+    if (signatureInput) {
+      const hiddenInput = document.createElement("input");
+      hiddenInput.type = "hidden";
+      hiddenInput.name = "signatureFromInput";
+      hiddenInput.value = signatureInput; // Giá trị chữ ký từ input
+      form.appendChild(hiddenInput);
+    }
+
+    if (fileInput) {
+      const allowedExtensions = ["pem"]; // Chỉ cho phép file .pem
+      const fileExtension = fileInput.name.split(".").pop().toLowerCase();
+
+      // Kiểm tra định dạng file
+      if (!allowedExtensions.includes(fileExtension)) {
+        alert("Vui lòng chọn file định dạng .pem!");
+        return; // Ngừng xử lý nếu định dạng file không hợp lệ
+      }
+
+      // Đọc file và thêm hidden input cho file
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const fileContent = e.target.result.trim();
+
+        const hiddenInputFile = document.createElement("input");
+        hiddenInputFile.type = "hidden";
+        hiddenInputFile.name = "signatureFromFile";
+        hiddenInputFile.value = fileContent; // Nội dung đã xử lý từ file
+        form.appendChild(hiddenInputFile);
+
+        form.submit(); // Gửi form sau khi file được đọc xong
+      };
+      reader.readAsText(fileInput);
+    } else {
+      // Nếu không có file, chỉ gửi form với chữ ký từ text
+      form.submit();
+    }
+  }
+</script>
 
 </body>
 
