@@ -1,5 +1,6 @@
 package main.controller;
 
+import main.bean.Key;
 import main.bean.User;
 import main.services.*;
 
@@ -38,8 +39,10 @@ public class ServletAddKeyFromUser extends HttpServlet {
         keyService.getInstance().importNewKey(user.getUserId(),signature);
         System.out.println("imporrt thành công"+ keyNow);
         SignaruteService.getInstance().updateKeyStatus(keyNow);
-
-        request.getRequestDispatcher("ServletGetKeyInfor").forward(request, response);
+        String iduser = user.getUserId();
+        Key ifkey= keyService.getInstance().getKey(iduser);
+        session.setAttribute("ifkey",ifkey);
+        request.getRequestDispatcher("/key.jsp").forward(request, response);
 
 
     }
