@@ -10,6 +10,8 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @WebServlet(name = "ServletResetFormoder", value = "/ServletResetFormoder")
 public class ServletResetFormoder extends HttpServlet {
@@ -53,7 +55,19 @@ public class ServletResetFormoder extends HttpServlet {
                        String keyUser = SignaruteService.getInstance().getPublicKeyFromUser(user.getUserId());
                        System.out.println("keyUser 1 : "+ keyUser);
                        // hash don hang
-                       String hashData = SignaruteService.getInstance().createHashSignature(user, cart, adrs1, adrs2,timestamp);
+                       HashMap<String, Products> data = cart.getData();
+                       ArrayList<OderCart> listproduct= new ArrayList<>();
+                       for (Map.Entry<String, Products> entry : data.entrySet()) {
+                           Products item = entry.getValue();
+                           int quantity = item.getQuantity();
+                           Products product= new Products(item.getID_food(),item.getPrice(),item.getFoodName());
+                           // Tạo đối tượng OrderCart với sản phẩm và số lượng
+                           OderCart orderCart = new OderCart(product, quantity);
+                           listproduct.add(orderCart);
+                       }
+                       long total = cart.getTotal();
+                       int quanity = cart.getQuantity();
+                       String hashData = SignaruteService.getInstance().createHashSignature(user, listproduct,total,quanity, adrs1, adrs2,timestamp);
                        System.out.println("HashData 1 : " + hashData);
                        // ma hoa hash bang privatekey
                        String encryptHash = SignaruteService.getInstance().encryptHashDataSignature(hashData, signature);

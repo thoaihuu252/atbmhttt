@@ -28,7 +28,7 @@ public class keyService {
             PreparedStatement ps = conn.prepareStatement("SELECT keyrsa.ID_key,keyrsa.KeyRSA,keyrsa.status,keyrsa.time_active From keyrsa " +
                     "WHERE ID_USER = ?AND status=? ");
             ps.setString(1, iduser);
-            ps.setString(2, "Đang hoạt động");
+            ps.setString(2, "ACTIVE");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 String idKey = rs.getString(1);
@@ -72,7 +72,7 @@ public class keyService {
             PreparedStatement ps = conn.prepareStatement("SELECT keyrsa.ID_key,keyrsa.KeyRSA,keyrsa.status,keyrsa.time_active From keyrsa " +
                     "WHERE ID_USER = ? AND status=? ");
             ps.setString(1, iduser);
-            ps.setString(2, "Đang hoạt động");
+            ps.setString(2, "ACTIVE");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 String idKey = rs.getString(1);

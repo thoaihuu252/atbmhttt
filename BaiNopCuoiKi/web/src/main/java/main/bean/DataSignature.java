@@ -5,10 +5,11 @@ import com.google.gson.Gson;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DataSignature {
-    private HashMap<String, Products> data;
+    private ArrayList<OderCart> data;
     private User customer;
     private long total;
     private int quantity;
@@ -18,7 +19,7 @@ public class DataSignature {
     private Timestamp timestamp;
 
     // Constructor
-    public DataSignature(HashMap<String, Products> data, User customer, long total, int quantity,String date,String add1,String add2,Timestamp timestamp) {
+    public DataSignature(ArrayList<OderCart> data, User customer, long total, int quantity, String date, String add1, String add2, Timestamp timestamp) {
         this.data = data;
         this.customer = customer;
         this.total = total;
@@ -36,11 +37,11 @@ public class DataSignature {
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
-    public HashMap<String, Products> getData() {
+    public ArrayList<OderCart> getData() {
         return data;
     }
 
-    public void setData(HashMap<String, Products> data) {
+    public void setData(ArrayList<OderCart> data) {
         this.data = data;
     }
 
