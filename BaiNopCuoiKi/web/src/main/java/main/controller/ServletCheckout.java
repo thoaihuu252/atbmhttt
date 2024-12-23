@@ -26,16 +26,16 @@ public class ServletCheckout extends HttpServlet {
 
 
         if (user!=null) {
-
-            if (AddOderService.getInstance().adODer(user.getIdacc(), cart, vouch,adrs1,adrs2)) {
-                request.setAttribute("error", "Thanh toán thành công");
-                session.setAttribute("cart", new Cart());
-                request.getRequestDispatcher("/showCart").forward(request, response);
-
-            } else {
-                request.setAttribute("error", "Thanh toán thất bại");
-                request.getRequestDispatcher("/showCart").forward(request, response);
-            }
+//
+//            if (AddOderService.getInstance().adODer(user.getIdacc(), cart, vouch,adrs1,adrs2)) {
+//                request.setAttribute("error", "Thanh toán thành công");
+//                session.setAttribute("cart", new Cart());
+//                request.getRequestDispatcher("/showCart").forward(request, response);
+//
+//            } else {
+//                request.setAttribute("error", "Thanh toán thất bại");
+//                request.getRequestDispatcher("/showCart").forward(request, response);
+//            }
         }else{
                 request.setAttribute("error", "Vui lòng đang nhập để thanh toán");
                 request.getRequestDispatcher("/getIndex").forward(request, response);

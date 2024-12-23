@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
 import java.util.HashMap;
 
 public class DataSignature {
@@ -14,9 +15,10 @@ public class DataSignature {
     private String date;
     private String add1;
     private String add2;
+    private Timestamp timestamp;
 
     // Constructor
-    public DataSignature(HashMap<String, Products> data, User customer, long total, int quantity,String date,String add1,String add2) {
+    public DataSignature(HashMap<String, Products> data, User customer, long total, int quantity,String date,String add1,String add2,Timestamp timestamp) {
         this.data = data;
         this.customer = customer;
         this.total = total;
@@ -24,9 +26,16 @@ public class DataSignature {
         this.date = date;
         this.add1 = add1;
         this.add2 = add2;
+        this.timestamp = timestamp;
     }
 
     // Getter và Setter
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
+    }
     public HashMap<String, Products> getData() {
         return data;
     }

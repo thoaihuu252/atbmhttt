@@ -22,7 +22,7 @@ public class Order implements Serializable  {
     int total;
     Address address;
     String addresss;
-
+    String statusSignature;
     String wardID;
 
     String districtID;
@@ -90,6 +90,12 @@ public class Order implements Serializable  {
     public void setAddresss() throws IOException {
         ApiController control = new ApiController();
         this.addresss = control.getLocation(districtID,wardID);
+    }
+    public String getStatusSignature(){
+        return statusSignature;
+    }
+    public void setStatusSignature(String statusSignature){
+        this.statusSignature = statusSignature;
     }
     public String getWardID() {
         return wardID;

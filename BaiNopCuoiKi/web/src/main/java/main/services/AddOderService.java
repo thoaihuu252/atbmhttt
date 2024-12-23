@@ -4,9 +4,7 @@ import main.bean.*;
 import main.db.ConnectMysqlExample;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,9 +17,9 @@ public class AddOderService {
         return instance;
     }
 
-    public boolean adODer(String usid , Cart map, String voucherCode, String ads1, String ads2){
+    public boolean adODer(String usid , Cart map, String voucherCode, String ads1, String ads2,String orderRSA,Timestamp timestamp,String keyUser,String statusSignature){
         if(isleft(map)){
-        addOderByUser(usid, map, voucherCode,ads1,ads2);
+        addOderByUser(usid, map, voucherCode,ads1,ads2,orderRSA,timestamp,keyUser,statusSignature);
         return true;
         }
         else return false;
@@ -75,7 +73,7 @@ public class AddOderService {
         }
         return rs;
     }
-    public void addOderByUser (String usid , Cart map ,String voucherCode, String ads1, String ads2)  {
+    public void addOderByUser (String usid , Cart map , String voucherCode, String ads1, String ads2, String orderRSA, Timestamp time,String keyUser, String statusSignature)  {
         User us1 = useService.getInstance().getUserById(usid);
         Order neworder = new Order();
         ApiController control = new ApiController();
@@ -83,8 +81,8 @@ public class AddOderService {
             try {
                 Connection conn = ConnectMysqlExample.getConnection(ConnectMysqlExample.getDbUrl(), ConnectMysqlExample.getUserName(), ConnectMysqlExample.getPASSWORD());
                 PreparedStatement statement = conn.prepareStatement(
-                        "INSERT INTO orders (ID_ORDER, ORDER_DATE, PHONE_NUMBER, NAMEUSER, NOTE, ID_VOUCHER,ID_ADDRESS,STATUSS, DELIVERY_CHARGES,districtID,wardID)\n" +
-                        "VALUES (?,?,?,?,?,?,?,?,?,?,?);");
+                        "INSERT INTO orders (ID_ORDER, ORDER_DATE, PHONE_NUMBER, NAMEUSER, NOTE, ID_VOUCHER,ID_ADDRESS,STATUSS, DELIVERY_CHARGES,districtID,wardID,oder_RSA,time,key_used,status_signature)\n" +
+                        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
                 statement.setString(1,neworder.getIdOder());
                 statement.setString(2,AppService.getNowDate().toString());
                 statement.setString(3,us1.getPhoneNumber());
@@ -96,6 +94,10 @@ public class AddOderService {
                 statement.setInt(9,control.getCostdeliver("3695","90750",ads1,ads2));
                 statement.setInt(10,Integer.parseInt(ads1));
                 statement.setInt(11,Integer.parseInt(ads2));
+                statement.setString(12,orderRSA);
+                statement.setTimestamp(13,time);
+                statement.setString(14,keyUser);
+                statement.setString(15,statusSignature);
                 PreparedStatement statement2 = conn.prepareStatement(
                         "INSERT INTO order_account_details (ID_ACCOUNT, ID_ORDER)\n" +
                                 "VALUES (?,?);");

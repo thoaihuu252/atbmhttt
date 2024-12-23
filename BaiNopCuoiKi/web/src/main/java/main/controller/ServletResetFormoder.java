@@ -32,19 +32,28 @@ public class ServletResetFormoder extends HttpServlet {
        }
        if (stage==1){
            User user = (User) session.getAttribute("auth");
+           String idKeyUser = SignaruteService.getInstance().getIdKeyUser(user.getUserId());
            Cart cart = (Cart) session.getAttribute("cart");
            String adrs1 = request.getParameter("diachi1");
+           System.out.println("adrs1 : "+ adrs1);
            String adrs2 = request.getParameter("diachi2");
-           String signature = request.getParameter("signature");
+           System.out.println("adrs2 : "+ adrs2);
+           String signatureFromFile = request.getParameter("signatureFromFile");
+           String signatureFromInput = request.getParameter("signatureFromInput");
+           String signature =SignaruteService.getInstance().getSignatureFromForm(signatureFromInput,signatureFromFile);
            String vouch = (String) request.getParameter("voucher");
-           System.out.println("signature 1 : "+ signature);
+           System.out.println("signatureFromFile : "+ signatureFromFile);
+           System.out.println("signatureFromInput : "+ signatureFromInput);
+           System.out.println("signature : "+ signature);
+           long currentTimeMillis = System.currentTimeMillis();
+           java.sql.Timestamp timestamp = new java.sql.Timestamp(currentTimeMillis);
            if (user!=null) {
                if (signature != null){
                    try {
                        String keyUser = SignaruteService.getInstance().getPublicKeyFromUser(user.getUserId());
                        System.out.println("keyUser 1 : "+ keyUser);
                        // hash don hang
-                       String hashData = SignaruteService.getInstance().createHashSignature(user, cart, adrs1, adrs2);
+                       String hashData = SignaruteService.getInstance().createHashSignature(user, cart, adrs1, adrs2,timestamp);
                        System.out.println("HashData 1 : " + hashData);
                        // ma hoa hash bang privatekey
                        String encryptHash = SignaruteService.getInstance().encryptHashDataSignature(hashData, signature);
@@ -52,7 +61,7 @@ public class ServletResetFormoder extends HttpServlet {
                        boolean verify = SignaruteService.getInstance().verifySignature(hashData, encryptHash, keyUser);
                        System.out.println("verify : " + verify);
                        if (verify) {
-                           if (AddOderService.getInstance().adODer(user.getIdacc(), cart, vouch, adrs1, adrs2)) {
+                           if (AddOderService.getInstance().adODer(user.getIdacc(), cart, vouch, adrs1, adrs2,encryptHash,timestamp,idKeyUser,"Có chữ ký")) {
                                request.setAttribute("error", "Thanh toán thành công");
                                session.setAttribute("cart", new Cart());
                                request.getRequestDispatcher("./yah.html").forward(request, response);
@@ -69,8 +78,7 @@ public class ServletResetFormoder extends HttpServlet {
                        throw new RuntimeException(e);
                    }
                } else {
-                   System.out.println("signature null "+ signature);
-                   if (AddOderService.getInstance().adODer(user.getIdacc(), cart, vouch,adrs1,adrs2)) {
+                   if (AddOderService.getInstance().adODer(user.getIdacc(), cart, vouch,adrs1,adrs2,"N/A",timestamp,"N/A","Không chữ ký")) {
                        request.setAttribute("error", "Thanh toán thành công");
                        session.setAttribute("cart", new Cart());
                        request.getRequestDispatcher("./yah.html").forward(request, response);
