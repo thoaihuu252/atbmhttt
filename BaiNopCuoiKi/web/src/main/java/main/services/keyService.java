@@ -92,7 +92,7 @@ public class keyService {
             long dateTime = System.currentTimeMillis() ;
             java.sql.Timestamp timeExpired = new java.sql.Timestamp(dateTime);
             PreparedStatement ps = conn.prepareStatement("UPDATE keyrsa SET status = ?, time_expired = ? WHERE  ID_key = ?;");
-            ps.setString(1, "Vô hiệu");
+            ps.setString(1, "DISABLED");
             ps.setTimestamp(2, timeExpired);
             ps.setString(3, idKey);
 
@@ -117,7 +117,7 @@ public class keyService {
                     "VALUES (?, ?, ?, ?, ?);");
             ps.setString(1, iduser +"key"+(keyService.getInstance().checkCOUNT(iduser)+1));
             ps.setString(2, publicKey);
-            ps.setString(3, "Đang hoạt động");
+            ps.setString(3, "ACTIVE");
             ps.setTimestamp(4, timeActive);
             ps.setString(5, iduser);
 

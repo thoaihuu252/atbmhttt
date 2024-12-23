@@ -211,7 +211,7 @@
                 </div>
 
                 <div class="projects_data">
-                  <% if (ifkey.getStatus().equals("Chưa Tạo Hoặc Đã Bị Vô Hiệu Hóa")){
+                  <% if (ifkey.getStatus().equals("NEED TO CREATE")){
                   %>
                   <div class="data">
                     <h4>Tạo khóa </h4>
