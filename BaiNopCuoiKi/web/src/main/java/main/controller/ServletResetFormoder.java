@@ -61,7 +61,7 @@ public class ServletResetFormoder extends HttpServlet {
                        boolean verify = SignaruteService.getInstance().verifySignature(hashData, encryptHash, keyUser);
                        System.out.println("verify : " + verify);
                        if (verify) {
-                           if (AddOderService.getInstance().adODer(user.getIdacc(), cart, vouch, adrs1, adrs2,encryptHash,timestamp,idKeyUser,"true")) {
+                           if (AddOderService.getInstance().adODer(user.getIdacc(), cart, vouch, adrs1, adrs2,encryptHash,timestamp,idKeyUser,"Có chữ ký")) {
                                request.setAttribute("error", "Thanh toán thành công");
                                session.setAttribute("cart", new Cart());
                                request.getRequestDispatcher("./yah.html").forward(request, response);
@@ -78,7 +78,7 @@ public class ServletResetFormoder extends HttpServlet {
                        throw new RuntimeException(e);
                    }
                } else {
-                   if (AddOderService.getInstance().adODer(user.getIdacc(), cart, vouch,adrs1,adrs2,"N/A",timestamp,"N/A","false")) {
+                   if (AddOderService.getInstance().adODer(user.getIdacc(), cart, vouch,adrs1,adrs2,"N/A",timestamp,"N/A","Không chữ ký")) {
                        request.setAttribute("error", "Thanh toán thành công");
                        session.setAttribute("cart", new Cart());
                        request.getRequestDispatcher("./yah.html").forward(request, response);
