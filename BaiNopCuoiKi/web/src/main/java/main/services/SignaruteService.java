@@ -47,6 +47,22 @@ public class SignaruteService {
         }
         return null;
     }
+    public String getPublicKeyByID(String id){
+        try {
+            Connection conn = ConnectMysqlExample.getConnection(ConnectMysqlExample.getDbUrl(), ConnectMysqlExample.getUserName(), ConnectMysqlExample.getPASSWORD());
+            String query = "select keyrsa.keyRSA from keyrsa where keyrsa.ID_key= ?  ";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, id);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                return rs.getString(1);
+            }
+            conn.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
     public String getIdKeyUser(String id){
         try {
             Connection conn = ConnectMysqlExample.getConnection(ConnectMysqlExample.getDbUrl(), ConnectMysqlExample.getUserName(), ConnectMysqlExample.getPASSWORD());
@@ -56,6 +72,26 @@ public class SignaruteService {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 return rs.getString(1);
+            }
+            conn.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+    public Key getTimeByIdKey(String id){
+        try {
+            Connection conn = ConnectMysqlExample.getConnection(ConnectMysqlExample.getDbUrl(), ConnectMysqlExample.getUserName(), ConnectMysqlExample.getPASSWORD());
+            String query = "select keyrsa.time_active,keyrsa.time_expired from keyrsa where keyrsa.ID_key= ?";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, id);
+            ResultSet rs = ps.executeQuery();
+            Key a;
+            while (rs.next()) {
+                Timestamp   timeactive= rs.getTimestamp(1);
+                Timestamp timeExpired=    rs.getTimestamp(2);
+               a= new Key(timeactive,timeExpired);
+                return a;
             }
             conn.close();
         } catch (Exception ex) {

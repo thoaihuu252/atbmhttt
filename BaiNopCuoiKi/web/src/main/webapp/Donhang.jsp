@@ -246,7 +246,16 @@
                                         <a href="./ServletCancelOder?idoder=<%=item.getIdOder()%>"><i class="fa fa-trash" aria-hidden="true"></i>Hủy</a>
                                     </td>
                                     <td><%=item.getStatusSignature()%></td>
-                                    <td><%=item.getIntegrity()%></td>
+                                    <%
+                                        String color = "green"; // Mặc định màu xanh
+                                        if ("Dữ liệu đã bị thay đổi".equals(item.getIntegrity())) {
+                                            color = "red";
+                                        }
+                                    %>
+                                    <td style="color: <%= color %>">
+                                        <%= item.getIntegrity() %>
+                                    </td>
+
                                 </tr>
                                 <%}%>
                                 </tbody>

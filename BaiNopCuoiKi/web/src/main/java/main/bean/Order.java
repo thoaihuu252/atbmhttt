@@ -33,6 +33,7 @@ public class Order implements Serializable  {
     ArrayList<OderCart> allOderCart;
     String oder_RSA;
     Timestamp time;
+    String id_key;
     public Order() {
     }
 
@@ -119,15 +120,29 @@ public class Order implements Serializable  {
         long total = getProfit();
 
         String hashData = SignaruteService.getInstance().createHashSignature(user, listproduct, total,quanity,getDistrictID(), getWardID(),getTime());
-        String keyUser = SignaruteService.getInstance().getPublicKeyFromUser(user.userId);
+        String keyUser = SignaruteService.getInstance().getPublicKeyByID(id_key);
+        Key a =SignaruteService.getInstance().getTimeByIdKey(id_key);
+        Timestamp timeactive= a.getTimeActived();
+        Timestamp timeExpired=a.getTimeExpiredd();
+        if(timeExpired==null)timeExpired= new Timestamp(System.currentTimeMillis());
+        if(isInRange(getTime(),timeactive,timeExpired)){
+            if(getStatusSignature().equals("Có chữ ký")){
+                boolean test = SignaruteService.getInstance().verifySignature(hashData, getOder_RSA(), keyUser);
+                if(test){this.integrity="Dữ liệu toàn vẹn";}
+                else {this.integrity="Dữ liệu đã bị thay đổi";}
 
-        if(getStatusSignature().equals("Có chữ ký")){
-            boolean test = SignaruteService.getInstance().verifySignature(hashData, getOder_RSA(), keyUser);
-            if(test){this.integrity="Dữ liệu toàn vẹn";}
-            else {this.integrity="Dữ liệu đã bị thay đổi";}
+            }else{ this.integrity="";}
+        }
 
-        }else{ this.integrity="";}
 
+    }
+    public boolean isInRange(Timestamp time, Timestamp start, Timestamp end) {
+        if (time == null || start == null || end == null) {
+            return false;
+        }
+        // time >= start tương đương !time.before(start)
+        // time <= end   tương đương !time.after(end)
+        return (!time.before(start) && !time.after(end));
     }
 
     public void setAddresss() throws IOException {
@@ -147,6 +162,14 @@ public class Order implements Serializable  {
 
     public void setOder_RSA(String oder_RSA) {
         this.oder_RSA = oder_RSA;
+    }
+
+    public String getId_key() {
+        return id_key;
+    }
+
+    public void setId_key(String id_key) {
+        this.id_key = id_key;
     }
 
     public String getWardID() {

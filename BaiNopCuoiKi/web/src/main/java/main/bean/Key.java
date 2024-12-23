@@ -1,11 +1,15 @@
 package main.bean;
 
+import java.sql.Timestamp;
+
 public class Key {
     String id_key;
     String key;
     String status;
     String timeActive;
     String timeExpired;
+    Timestamp timeActived;
+    Timestamp timeExpiredd;
     public Key() {
     }
 
@@ -16,7 +20,11 @@ public class Key {
         this.status = status;
         this.timeActive = timeActive;
     }
+    public Key(Timestamp timeActived,Timestamp timeExpiredd) {
+        this.timeExpiredd = timeExpiredd;
+        this.timeActived= timeActived;
 
+    }
 
     public Key(String status,String timeActive) {
         this.status = status;
@@ -25,6 +33,22 @@ public class Key {
     }
     public String getTimeExpired() {
         return timeExpired;
+    }
+
+    public Timestamp getTimeActived() {
+        return timeActived;
+    }
+
+    public void setTimeActived(Timestamp timeActived) {
+        this.timeActived = timeActived;
+    }
+
+    public Timestamp getTimeExpiredd() {
+        return timeExpiredd;
+    }
+
+    public void setTimeExpiredd(Timestamp timeExpiredd) {
+        this.timeExpiredd = timeExpiredd;
     }
 
     public void setTimeExpired(String timeExpired) {
