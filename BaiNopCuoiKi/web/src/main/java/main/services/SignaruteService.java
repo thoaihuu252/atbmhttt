@@ -89,7 +89,7 @@ public class SignaruteService {
                     ConnectMysqlExample.getUserName(),
                     ConnectMysqlExample.getPASSWORD()
             );
-            String query = "UPDATE keyrsa SET status = ?, dt_expire = ? WHERE ID_key = ?";
+            String query = "UPDATE keyrsa SET status = ?, time_expired = ? WHERE ID_key = ?";
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setString(1, "DISABLE");        // Cập nhật trạng thái thành "DISABLE"
             ps.setTimestamp(2, timestamp);  // Cập nhật thời gian hết hạn
