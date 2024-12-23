@@ -1,9 +1,12 @@
 package main.bean;
 
 import main.services.AppService;
+import main.services.SignaruteService;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -24,11 +27,12 @@ public class Order implements Serializable  {
     String addresss;
     String statusSignature;
     String wardID;
-
+    String integrity;
     String districtID;
     Voucher voucher;
     ArrayList<OderCart> allOderCart;
-
+    String oder_RSA;
+    Timestamp time;
     public Order() {
     }
 
@@ -85,6 +89,45 @@ public class Order implements Serializable  {
     }
     public void update() throws IOException {
         setAddresss();
+        //setIntegrity();
+    }
+    public void updateIntegrity(User user) throws Exception {
+        setIntegrity(user);
+    }
+
+
+    public String getIntegrity() {
+        return integrity;
+    }
+
+    public Timestamp getTime() {
+        return time;
+    }
+
+    public void setTime(Timestamp time) {
+        this.time = time;
+    }
+
+    public void setIntegrity(User user) throws Exception {
+        ArrayList<OderCart> listproduct= new ArrayList<>();
+        int quanity = 0;
+        for(OderCart a : allOderCart){
+            OderCart product= new OderCart(new Products(a.Item.getID_food(),a.Item.getPrice(),a.Item.getFoodName()),a.value);
+            listproduct.add(product);
+            quanity+=a.value;
+        }
+        long total = getProfit();
+
+        String hashData = SignaruteService.getInstance().createHashSignature(user, listproduct, total,quanity,getDistrictID(), getWardID(),getTime());
+        String keyUser = SignaruteService.getInstance().getPublicKeyFromUser(user.userId);
+
+        if(getStatusSignature().equals("Có chữ ký")){
+            boolean test = SignaruteService.getInstance().verifySignature(hashData, getOder_RSA(), keyUser);
+            if(test){this.integrity="Dữ liệu toàn vẹn";}
+            else {this.integrity="Dữ liệu đã bị thay đổi";}
+
+        }else{ this.integrity="";}
+
     }
 
     public void setAddresss() throws IOException {
@@ -97,6 +140,15 @@ public class Order implements Serializable  {
     public void setStatusSignature(String statusSignature){
         this.statusSignature = statusSignature;
     }
+
+    public String getOder_RSA() {
+        return oder_RSA;
+    }
+
+    public void setOder_RSA(String oder_RSA) {
+        this.oder_RSA = oder_RSA;
+    }
+
     public String getWardID() {
         return wardID;
     }
