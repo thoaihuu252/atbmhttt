@@ -5,10 +5,7 @@ import main.db.ConnectMysqlExample;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -83,6 +80,47 @@ public class SignaruteService {
             return signatureFromInput;
         }
     }
+    public boolean updateKeyStatus(String idKey) {
+        long currentTimeMillis = System.currentTimeMillis();
+        java.sql.Timestamp timestamp = new java.sql.Timestamp(currentTimeMillis);
+        try {
+            Connection conn = ConnectMysqlExample.getConnection(
+                    ConnectMysqlExample.getDbUrl(),
+                    ConnectMysqlExample.getUserName(),
+                    ConnectMysqlExample.getPASSWORD()
+            );
+            String query = "UPDATE keyrsa SET status = ?, dt_expire = ? WHERE ID_key = ?";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, "DISABLE");        // Cập nhật trạng thái thành "DISABLE"
+            ps.setTimestamp(2, timestamp);  // Cập nhật thời gian hết hạn
+            ps.setString(3, idKey);           // ID của khóa cần cập nhật
+
+            int rowsUpdated = ps.executeUpdate();
+            conn.close();
+            return rowsUpdated > 0; // Trả về true nếu cập nhật thành công
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false; // Trả về false nếu có lỗi xảy ra
+    }
+    public java.sql.Timestamp getTimeExpired(String idKey){
+        try {
+            Connection conn = ConnectMysqlExample.getConnection(ConnectMysqlExample.getDbUrl(), ConnectMysqlExample.getUserName(), ConnectMysqlExample.getPASSWORD());
+            String query = "select keyrsa.time_active from keyrsa where keyrsa.id_user= ? and keyrsa.status = 'ACTIVE'";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, idKey);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                return rs.getTimestamp(1);
+            }
+            conn.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+
 
     public static void main(String[] args) {
         System.out.println(SignaruteService.getInstance().getIdKeyUser("USER1"));
