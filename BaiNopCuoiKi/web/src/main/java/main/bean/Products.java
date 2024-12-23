@@ -93,6 +93,17 @@ public class Products implements Serializable {
         this.idImg = idImg;
     }
 
+    public Products(String idFood, int quantity) {
+        this.idFood = idFood;
+        this.quantity = quantity;
+    }
+
+    public Products(String idFood, int price, String foodName) {
+        this.idFood = idFood;
+        this.price = price;
+        this.foodName = foodName;
+    }
+
     public String getID_food() {
         return idFood;
     }

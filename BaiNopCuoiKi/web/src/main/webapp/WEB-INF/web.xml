@@ -384,5 +384,21 @@
     <servlet-name>uploadimg</servlet-name>
     <url-pattern>/UploadDownloadFileServlet</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>ServletCreateKey</servlet-name>
+    <servlet-class>main.controller.ServletCreateKey</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ServletCreateKey</servlet-name>
+    <url-pattern>/ServletCreateKey</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>ServletLockKey</servlet-name>
+    <servlet-class>main.controller.ServletLockKey</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ServletLockKey</servlet-name>
+    <url-pattern>/ServletLockKey</url-pattern>
+  </servlet-mapping>
 
 </web-app>

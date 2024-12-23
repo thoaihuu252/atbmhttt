@@ -1,9 +1,6 @@
 package main.services;
 
-import main.bean.Cart;
-import main.bean.DataSignature;
-import main.bean.Products;
-import main.bean.User;
+import main.bean.*;
 import main.db.ConnectMysqlExample;
 
 import java.security.NoSuchAlgorithmException;
@@ -12,7 +9,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class SignaruteService {
     private static SignaruteService instance;
@@ -23,16 +22,14 @@ public class SignaruteService {
         return instance;
     }
     // Tạo hash dữ liệu đặt hàng
-    public String createHashSignature(User user , Cart map, String ads1, String ads2, Timestamp timestamp) throws NoSuchAlgorithmException {
-        HashMap<String, Products> data = map.getData();
-        long total = map.getTotal();
-        int quanity = map.getQuantity();
+    public String createHashSignature(User user ,  ArrayList<OderCart> listproduct,long total, int quanity, String ads1, String ads2, Timestamp timestamp) throws NoSuchAlgorithmException {
         String date= AppService.getNowDate().toString();
-        DataSignature dataSignature = new DataSignature(data,user,total,quanity,date,ads1,ads2,timestamp);
+        DataSignature dataSignature = new DataSignature(listproduct,user,total,quanity,date,ads1,ads2,timestamp);
         String hashData = dataSignature.hashDataSignature();
         System.out.println("Hash : " + hashData);
         return hashData;
     }
+
         // Lấy key của user
     public String getPublicKeyFromUser(String id){
         try {
