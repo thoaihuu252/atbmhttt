@@ -488,7 +488,6 @@
             if (useSignature) {
                 showSignatureModal()
             } else {
-                // Gửi form mà không thêm chữ ký
                 document.getElementById('form1').submit();
             }
         }
@@ -549,46 +548,57 @@
             document.getElementById('signatureModal').style.display = 'none';
         }
 
-        // Xử lý khi người dùng gửi chữ ký
         function handleSignatureSubmit() {
             const signatureInput = document.getElementById('signatureInput').value.trim();
             const fileInput = document.getElementById('signatureFile').files[0];
             const form = document.getElementById('form1');
 
+            // Kiểm tra nếu cả hai đều có giá trị
+            if (signatureInput && fileInput) {
+                alert("Bạn chỉ được chọn file hoặc nhập chữ ký, không được thực hiện cả hai!");
+                return; // Ngừng xử lý nếu cả hai đều được sử dụng
+            }
+
+            // Kiểm tra trường hợp trống
+            if (!signatureInput && !fileInput) {
+                alert("Vui lòng nhập chữ ký hoặc chọn file!");
+                return; // Ngừng gửi form nếu cả hai đều trống
+            }
+
+            // Kiểm tra nếu có file và đọc file
             if (fileInput) {
                 const allowedExtensions = ['txt']; // Chỉ cho phép file .txt
                 const fileExtension = fileInput.name.split('.').pop().toLowerCase();
-
                 if (!allowedExtensions.includes(fileExtension)) {
                     alert("Vui lòng chọn file định dạng .txt!");
                     return; // Ngừng xử lý nếu định dạng file không hợp lệ
                 }
-                // Nếu định dạng hợp lệ, đọc file
+
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     const hiddenInput = document.createElement('input');
                     hiddenInput.type = 'hidden';
-                    hiddenInput.name = 'signature';
+                    hiddenInput.name = 'signatureFromFile';
                     hiddenInput.value = e.target.result.trim(); // Nội dung từ file
                     form.appendChild(hiddenInput);
                     closeSignatureModal();
-                    form.submit();
+                    form.submit(); // Chỉ gửi form sau khi thêm input ẩn
                 };
                 reader.readAsText(fileInput);
+
             } else if (signatureInput) {
-                // Nếu không có file nhưng có chữ ký trong input
+                // Nếu có chữ ký từ input
                 const hiddenInput = document.createElement('input');
                 hiddenInput.type = 'hidden';
-                hiddenInput.name = 'signature';
+                hiddenInput.name = 'signatureFromInput';
                 hiddenInput.value = signatureInput; // Nội dung từ input text
                 form.appendChild(hiddenInput);
+                console.log("Signature from input:", signatureInput);
                 closeSignatureModal();
-                form.submit();
-            } else {
-                // Nếu cả file và input đều trống
-                alert("Vui lòng nhập chữ ký hoặc chọn file!");
+                form.submit(); // Gửi form sau khi thêm input ẩn
             }
         }
+
     </script>
 
 
