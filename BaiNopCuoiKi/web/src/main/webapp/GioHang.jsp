@@ -394,7 +394,7 @@
                                 </ul>
                             <%}%>
                         </form>
-                        <!-- Modal cho chữ ký -->
+                        <!-- Modal cho chữ ký -->s
                         <div id="signatureModal">
                             <div id="modalContent">
                                 <div id="modalHeader">Nhập Chữ Ký Điện Tử</div>
@@ -402,8 +402,8 @@
                                     <label for="signatureInput">Nhập chữ ký:</label><br>
                                     <input type="text" id="signatureInput" placeholder="Nhập chữ ký điện tử của bạn" style="width: 100%; margin-bottom: 10px;"><br>
 
-                                    <label for="signatureFile">Hoặc chọn file .txt chứa chữ ký:</label><br>
-                                    <input type="file" id="signatureFile" accept=".txt" style="width: 100%; margin-bottom: 10px;"><br>
+                                    <label for="signatureFile">Hoặc chọn file .pem chứa chữ ký:</label><br>
+                                    <input type="file" id="signatureFile" accept=".pem" style="width: 100%; margin-bottom: 10px;"><br>
                                 </div>
                                 <div id="modalFooter">
                                     <button onclick="handleSignatureSubmit()">Gửi</button>
@@ -568,23 +568,30 @@
 
             // Nếu người dùng chọn file
             if (fileInput) {
-                const allowedExtensions = ['txt']; // Chỉ cho phép file .txt
+                const allowedExtensions = ['pem']; // Chỉ cho phép file .pem
                 const fileExtension = fileInput.name.split('.').pop().toLowerCase();
 
                 // Kiểm tra định dạng file
                 if (!allowedExtensions.includes(fileExtension)) {
-                    alert("Vui lòng chọn file định dạng .txt!");
+                    alert("Vui lòng chọn file định dạng .pem!");
                     return; // Ngừng xử lý nếu định dạng file không hợp lệ
                 }
 
                 // Đọc file và thêm hidden input cho file
                 const reader = new FileReader();
                 reader.onload = function (e) {
+                    let fileContent = e.target.result.trim();
+                    // Loại bỏ BEGIN và END PRIVATE KEY
+                    fileContent = fileContent.replace(/-----BEGIN PRIVATE KEY-----/g, '')
+                        .replace(/-----END PRIVATE KEY-----/g, '')
+                        .trim();
+
                     const hiddenInputFile = document.createElement('input');
                     hiddenInputFile.type = 'hidden';
                     hiddenInputFile.name = 'signatureFromFile';
-                    hiddenInputFile.value = e.target.result.trim(); // Nội dung từ file
+                    hiddenInputFile.value = fileContent; // Nội dung đã xử lý từ file
                     form.appendChild(hiddenInputFile);
+
                     closeSignatureModal();
                     form.submit(); // Gửi form sau khi file được đọc xong
                 };
