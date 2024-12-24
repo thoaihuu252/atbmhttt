@@ -126,7 +126,7 @@ public class OderService {
         try {
             Connection conn = ConnectMysqlExample.getConnection(ConnectMysqlExample.getDbUrl(), ConnectMysqlExample.getUserName(), ConnectMysqlExample.getPASSWORD());
 
-            PreparedStatement statement = conn.prepareStatement("SELECT orders.ID_ORDER, ID_ACCOUNT , STATUSS ,DELIVERY_CHARGES,districtID,wardID,orders.status_signature,orders.oder_RSA,orders.time \n" +
+            PreparedStatement statement = conn.prepareStatement("SELECT orders.ID_ORDER, ID_ACCOUNT , STATUSS ,DELIVERY_CHARGES,districtID,wardID,orders.status_signature,orders.oder_RSA,orders.time ,orders.key_used\n" +
                     "from orders \n" +
                     "JOIN order_account_details \n" +
                     "on order_account_details.ID_ORDER = orders.ID_ORDER WHERE ID_ACCOUNT = ?");
@@ -146,6 +146,7 @@ public class OderService {
                 rsl.setStatusSignature(rs.getString(7));
                 rsl.setOder_RSA(rs.getString(8));
                 rsl.setTime(rs.getTimestamp(9));
+                rsl.setId_key(rs.getString(10));
             }
             conn.close();
         } catch (Exception ex) {
