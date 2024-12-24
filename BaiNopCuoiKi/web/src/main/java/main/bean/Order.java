@@ -110,30 +110,36 @@ public class Order implements Serializable  {
     }
 
     public void setIntegrity(User user) throws Exception {
-        ArrayList<OderCart> listproduct= new ArrayList<>();
-        int quanity = 0;
-        for(OderCart a : allOderCart){
-            OderCart product= new OderCart(new Products(a.Item.getID_food(),a.Item.getPrice(),a.Item.getFoodName()),a.value);
-            listproduct.add(product);
-            quanity+=a.value;
+        if(!id_key.equals("N/A")) {
+            ArrayList<OderCart> listproduct = new ArrayList<>();
+            int quanity = 0;
+            for (OderCart a : allOderCart) {
+                OderCart product = new OderCart(new Products(a.Item.getID_food(), a.Item.getPrice(), a.Item.getFoodName()), a.value);
+                listproduct.add(product);
+                quanity += a.value;
+            }
+            long total = getProfit();
+
+            String hashData = SignaruteService.getInstance().createHashSignature(user, listproduct, total, quanity, getDistrictID(), getWardID(), getTime());
+            String keyUser = SignaruteService.getInstance().getPublicKeyByID(id_key);
+            Key a = SignaruteService.getInstance().getTimeByIdKey(id_key);
+            Timestamp timeactive = a.getTimeActived();
+            Timestamp timeExpired = a.getTimeExpiredd();
+            if (timeExpired == null) timeExpired = new Timestamp(System.currentTimeMillis());
+            if (isInRange(getTime(), timeactive, timeExpired)) {
+                if (getStatusSignature().equals("Có chữ ký")) {
+                    boolean test = SignaruteService.getInstance().verifySignature(hashData, getOder_RSA(), keyUser);
+                    if (test) {
+                        this.integrity = "Dữ liệu toàn vẹn";
+                    } else {
+                        this.integrity = "Dữ liệu đã bị thay đổi";
+                    }
+
+                } else {
+                    this.integrity = "";
+                }
+            }
         }
-        long total = getProfit();
-
-        String hashData = SignaruteService.getInstance().createHashSignature(user, listproduct, total,quanity,getDistrictID(), getWardID(),getTime());
-        String keyUser = SignaruteService.getInstance().getPublicKeyByID(id_key);
-        Key a =SignaruteService.getInstance().getTimeByIdKey(id_key);
-        Timestamp timeactive= a.getTimeActived();
-        Timestamp timeExpired=a.getTimeExpiredd();
-        if(timeExpired==null)timeExpired= new Timestamp(System.currentTimeMillis());
-        if(isInRange(getTime(),timeactive,timeExpired)){
-            if(getStatusSignature().equals("Có chữ ký")){
-                boolean test = SignaruteService.getInstance().verifySignature(hashData, getOder_RSA(), keyUser);
-                if(test){this.integrity="Dữ liệu toàn vẹn";}
-                else {this.integrity="Dữ liệu đã bị thay đổi";}
-
-            }else{ this.integrity="";}
-        }
-
 
     }
     public boolean isInRange(Timestamp time, Timestamp start, Timestamp end) {
