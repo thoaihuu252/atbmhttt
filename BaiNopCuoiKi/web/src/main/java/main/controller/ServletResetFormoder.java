@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @WebServlet(name = "ServletResetFormoder", value = "/ServletResetFormoder")
@@ -57,14 +58,18 @@ public class ServletResetFormoder extends HttpServlet {
                        // hash don hang
                        HashMap<String, Products> data = cart.getData();
                        ArrayList<OderCart> listproduct= new ArrayList<>();
+                       List<OderCart> tempList = new ArrayList<>();
                        for (Map.Entry<String, Products> entry : data.entrySet()) {
                            Products item = entry.getValue();
                            int quantity = item.getQuantity();
                            Products product= new Products(item.getID_food(),item.getPrice(),item.getFoodName());
+
                            // Tạo đối tượng OrderCart với sản phẩm và số lượng
                            OderCart orderCart = new OderCart(product, quantity);
-                           listproduct.add(orderCart);
+                           tempList .add(orderCart);
                        }
+                       tempList.sort((o1, o2) -> o1.getItem().getID_food().compareTo(o2.getItem().getID_food()));
+                       listproduct.addAll(tempList);
                        long total = cart.getTotal();
                        int quanity = cart.getQuantity();
                        String hashData = SignaruteService.getInstance().createHashSignature(user, listproduct,total,quanity, adrs1, adrs2,timestamp);

@@ -25,7 +25,11 @@ public class Login extends HttpServlet {
         String password = request.getParameter("password");
 
         User user = null;
-        user = useService.getInstance().checkLogin(username,password );
+        try {
+            user = useService.getInstance().checkLogin(username,Utils.getInstance().toSHA1(password) );
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
         if(user==null){
             request.setAttribute("error", "Username or password is incorrect");
             request.getRequestDispatcher("/DangNhap.jsp").forward(request, response);

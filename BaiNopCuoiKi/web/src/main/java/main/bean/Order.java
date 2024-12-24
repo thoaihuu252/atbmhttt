@@ -9,6 +9,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Order implements Serializable  {
 
@@ -111,13 +112,16 @@ public class Order implements Serializable  {
 
     public void setIntegrity(User user) throws Exception {
         if(!id_key.equals("N/A")) {
+            List<OderCart> tempList = new ArrayList<>();
             ArrayList<OderCart> listproduct = new ArrayList<>();
             int quanity = 0;
             for (OderCart a : allOderCart) {
                 OderCart product = new OderCart(new Products(a.Item.getID_food(), a.Item.getPrice(), a.Item.getFoodName()), a.value);
-                listproduct.add(product);
+                tempList.add(product);
                 quanity += a.value;
             }
+            tempList.sort((o1, o2) -> o1.Item.getID_food().compareTo(o2.Item.getID_food()));
+            listproduct.addAll(tempList);
             long total = getProfit();
 
             String hashData = SignaruteService.getInstance().createHashSignature(user, listproduct, total, quanity, getDistrictID(), getWardID(), getTime());
